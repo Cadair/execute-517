@@ -5,7 +5,7 @@ This package allows you to run any Python command inside the build environment s
 
 For example to get the version of a package run the following command in the root of the repository::
 
-  $ execute-517 "setup.py --version£
+  $ execute-517 "setup.py --version
 
 License
 -------
