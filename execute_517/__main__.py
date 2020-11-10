@@ -23,12 +23,12 @@ def main(cli_args, prog=None):
         help='source directory (defaults to current directory)',
     )
 
-    # parser.add_argument(
-    #     '--version',
-    #     '-V',
-    #     action='version',
-    #     version='execute-517 {} ({})'.format(execute_517.__version__, ', '.join(path for path in paths if path)),
-    # )
+    parser.add_argument(
+        '--version',
+        '-V',
+        action='version',
+        version='execute-517 {} ({})'.format(execute_517.__version__, ', '.join(path for path in paths if path)),
+    )
 
     args = parser.parse_args(cli_args)
 
@@ -40,8 +40,11 @@ def main(cli_args, prog=None):
     if isinstance(args.python_arguments, str):
         pyargs = args.python_arguments.split(" ")
 
-    execute_517.run_python_in_env(args.srcdir, pyargs)
+    sys.exit(execute_517.run_python_in_env(args.srcdir, pyargs))
 
 
 def entrypoint():
     main(sys.argv[1:])
+
+if __name__ == '__main__':  # pragma: no cover
+    main(sys.argv[1:], 'python -m execute_517')
