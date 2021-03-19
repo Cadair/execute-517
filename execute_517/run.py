@@ -10,7 +10,7 @@ from build.env import IsolatedEnvBuilder
 __all__ = ['run_python_in_env']
 
 
-# Copied from build but changing subprocess options to ouput to stderr
+# Copied from build.env._IsolatedEnvBuilder.install but changing subprocess options to ouput to stderr
 def silent_install(env, requirements):
     """
     Installs the specified PEP 508 requirements on the environment
@@ -21,19 +21,17 @@ def silent_install(env, requirements):
     if not requirements:
         return
 
+    # pip does not honour environment markers in command line arguments
+    # but it does for requirements from a file
     with tempfile.NamedTemporaryFile('w+', prefix='build-reqs-', suffix='.txt', delete=False) as req_file:
         req_file.write(os.linesep.join(requirements))
     try:
         cmd = [
-            env._pip_executable,
-            # on python2 if isolation is achieved via environment variables, we need to ignore those while calling
-            # host python (otherwise pip would not be available within it)
-            '-{}m'.format('E' if env._pip_executable == env.executable and sys.version_info[0] == 2 else ''),
+            env.executable,
+            '-{}m'.format('E' if sys.version_info[0] == 2 else 'I'),
             'pip',
             'install',
-            '--prefix',
-            env.path,
-            '--ignore-installed',
+            '--use-pep517',
             '--no-warn-script-location',
             '-r',
             os.path.abspath(req_file.name),
