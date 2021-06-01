@@ -64,8 +64,11 @@ def run_python_in_env(srcdir, args, **kwargs):
 
     with IsolatedEnvBuilder() as env:
         builder.python_executable = env.executable
+        silent_install(env, builder.build_system_requires)
 
-        silent_install(env, builder.build_dependencies)
+        requirements = builder.get_requires_for_build('sdist')
+
+        silent_install(env, requirements)
 
         sub_args = [builder.python_executable] + list(args)
         return subprocess.call(sub_args, cwd=cwd, **kwargs)
